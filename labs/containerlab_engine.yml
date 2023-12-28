@@ -152,7 +152,7 @@
     - name: Ran into issue
       ansible.builtin.debug:
         msg:
-          - "the lab didn't appear to exist..."
+          - "lab with name: {{ lab_title }}-{{ lab_username }}, didn't appear to exist..."
       when:
         - not lab_exists
         - ("deploy" in actions) or ("inspect" in actions)
