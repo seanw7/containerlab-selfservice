@@ -73,10 +73,10 @@
       ansible.builtin.debug:
         msg: "Found No Running Lab Environment: {{ deploy_output.stdout_lines }}"
       when:
-        - not deploy_output
+        - deploy_output is defined
+        - "'stdout_lines' in deploy_output"
+        - "deploy_output.stdout_lines | length == 0"
         - ("deploy" in actions) or ("inspect" in actions)
-        - (deploy_output.stdout_lines | length == 0)
-
 
     ### Powerdown lab nodes while maintaining startup configuration
     - name: Shutdown Lab
