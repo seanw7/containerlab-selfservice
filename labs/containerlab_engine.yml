@@ -67,7 +67,7 @@
       when:
         - deploy_output is defined
         - ("deploy" in actions) or ("inspect" in actions)
-        - stdout_lines in deploy_output
+        - ("stdout_lines" in deploy_output)
 
     ### Powerdown lab nodes while maintaining startup configuration
     - name: Shutdown Lab
