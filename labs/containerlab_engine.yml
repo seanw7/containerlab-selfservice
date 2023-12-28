@@ -85,6 +85,22 @@
         chdir: /opt/containerlab/labs/{{ lab_username }}/{{ lab_title }}
         cmd: containerlab save
       when: '"save" in actions'
+      changed_when: false
+
+    # - name: Simulate output capture
+    #   set_fact:
+    #     container_output: "{{ lookup('file', 'your_output_file.json') | from_json }}"
+
+    - name: Extract port mappings
+      ansible.builtin.set_fact:
+        port_mappings: "{{ port_mappings | default({}) | combine({ item.split()[-1]: ( item | regex_search('0.0.0.0:(\\d+)->22/tcp') | first ) }) }}"
+      loop: "{{ docker_output.stdout_lines }}"
+      when: "'22/tcp' in item"
+
+    - name: Show port mappings
+      ansible.builtin.debug:
+        var: port_mappings
+
 
     - name: Print Instructions
       ansible.builtin.debug:
