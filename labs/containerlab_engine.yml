@@ -67,7 +67,7 @@
       when:
         - deploy_output is defined
         - ("deploy" in actions) or ("inspect" in actions)
-        - ("stdout_lines" in deploy_output) and (len(deploy_output.stdout_lines) > 0)
+        - ("stdout_lines" in deploy_output) and (deploy_output.stdout_lines | length > 0)
 
     - name: Print Lab Topology Output When Nothing Returned
       ansible.builtin.debug:
@@ -75,7 +75,7 @@
       when:
         - deploy_output not defined
         - ("deploy" in actions) or ("inspect" in actions)
-        - ("stdout_lines" not in deploy_output) and (len(deploy_output.stdout_lines) == 0)
+        - ("stdout_lines" not in deploy_output) and (deploy_output.stdout_lines | length == 0)
 
 
     ### Powerdown lab nodes while maintaining startup configuration
