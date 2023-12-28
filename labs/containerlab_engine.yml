@@ -69,9 +69,18 @@
         - ("deploy" in actions) or ("inspect" in actions)
         - ("stdout_lines" in deploy_output) and (deploy_output.stdout_lines | length > 0)
 
-    - name: Print Lab Topology Output When Nothing Returned
-      ansible.builtin.debug:
-        msg: "Found No Running Lab Environment: {{ deploy_output.stdout_lines }}"
+    - name: Set lab_exists to true when lab is found
+      ansible.builtin.set_fact:
+        lab_exists: true
+      when:
+        - deploy_output is defined
+        - "'stdout_lines' in deploy_output"
+        - "deploy_output.stdout_lines | length > 0"
+        - ("deploy" in actions) or ("inspect" in actions)
+
+    - name: Set lab_exists to false when lab is not found
+      ansible.builtin.set_fact:
+        lab_exists: false
       when:
         - deploy_output is defined
         - "'stdout_lines' in deploy_output"
@@ -83,7 +92,9 @@
       ansible.builtin.command:
         chdir: /opt/containerlab/labs/{{ lab_username }}/{{ lab_title }}
         cmd: containerlab destroy
-      when: '"shutdown" in actions'
+      when:
+        - '"shutdown" in actions'
+        - lab_exists
       changed_when: true
 
     ### Powerdown and delete all startup configuration of nodes
@@ -91,7 +102,9 @@
       ansible.builtin.command:
         chdir: /opt/containerlab/labs/{{ lab_username }}/{{ lab_title }}
         cmd: containerlab destroy -c
-      when: '"destroy" in actions'
+      when:
+        - '"destroy" in actions'
+        - lab_exists
       changed_when: true
 
     ### Run containerlab save on all nodes to save startup configs locally
@@ -99,7 +112,9 @@
       ansible.builtin.command:
         chdir: /opt/containerlab/labs/{{ lab_username }}/{{ lab_title }}
         cmd: containerlab save
-      when: '"save" in actions'
+      when:
+        - '"save" in actions'
+        - lab_exists
       changed_when: false
 
     # - name: Simulate output capture
@@ -110,6 +125,7 @@
       when:
         - ("deploy" in actions)
         - ("inspect" in actions)
+        - lab_exists
       block:
         - name: Extract port mappings
           ansible.builtin.set_fact:
@@ -129,5 +145,14 @@
           - "to create IP interface on a linux container. First SSH then RUN command: sudo ifconfig <interface> <ip> netmask <mask>"
           - "to capture traffic and redirect locally to windows wireshark: {{ wireshark_command }}"
       when:
+        - lab_exists
         - deploy_output is defined
+        - ("deploy" in actions) or ("inspect" in actions)
+
+    - name: Ran into issue
+      ansible.builtin.debug:
+        msg:
+          - "the lab didn't appear to exist..."
+      when:
+        - not lab_exists
         - ("deploy" in actions) or ("inspect" in actions)
