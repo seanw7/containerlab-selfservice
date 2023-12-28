@@ -123,8 +123,7 @@
 
     - name: Collect port mappings
       when:
-        - ("deploy" in actions)
-        - ("inspect" in actions)
+        - ("deploy" in actions) or ("inspect" in actions)
         - lab_exists
       block:
         - name: Extract port mappings
