@@ -91,15 +91,20 @@
     #   set_fact:
     #     container_output: "{{ lookup('file', 'your_output_file.json') | from_json }}"
 
-    - name: Extract port mappings
-      ansible.builtin.set_fact:
-        port_mappings: "{{ port_mappings | default({}) | combine({ item.split()[-1]: (item | regex_search('0.0.0.0:(\\d+)->22/tcp', '\\1') | first) }) }}"
-      loop: "{{ docker_output.stdout_lines }}"
-      when: "'22/tcp' in item"
+    - name: Collect port mappings
+      when:
+        - ("deploy" in actions)
+        - ("inspect" in actions)
+      block:
+        - name: Extract port mappings
+          ansible.builtin.set_fact:
+            port_mappings: "{{ port_mappings | default({}) | combine({item.split()[-1]: (item | regex_search('0.0.0.0:(\\d+)->22/tcp', '\\1') | first)}) }}"
+          loop: "{{ docker_output.stdout_lines }}"
+          when: "'22/tcp' in item"
 
-    - name: Show port mappings
-      ansible.builtin.debug:
-        var: port_mappings
+        - name: Show port mappings
+          ansible.builtin.debug:
+            var: port_mappings
 
 
     - name: Print Instructions

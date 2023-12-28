@@ -27,11 +27,16 @@ topology:
       image: "{{ host_container_image | default(host_container_kind + ':latest') }}"
       env:
         TMODE: lacp
+        PASSWORD_ACCESS: true
+        USER_PASSWORD: admin
       ports:
         - "5{{ user_map[lab_username] }}05:22"
     {{ lab_title }}-{{ lab_username }}-client01:
       kind: "{{ host_container_kind }}"
       image: "{{ host_container_image | default(host_container_kind + ':latest') }}"
+      env:
+        PASSWORD_ACCESS: true
+        USER_PASSWORD: admin
       ports:
         - "5{{ user_map[lab_username] }}06:22"
   links:
