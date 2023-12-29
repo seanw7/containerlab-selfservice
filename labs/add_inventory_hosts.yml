@@ -11,9 +11,9 @@
   awx.awx.inventory:
     name: "{{ inventory_name }}"
     organization: "{{ organization }}"
-    # tower_host: "{{ awx_host }}"
-    tower_username: "{{ awx_username }}"
-    tower_password: "{{ awx_password }}"
+    controller_host: "{{ awx_host }}"
+    controller_username: "{{ awx_username }}"
+    controller_password: "{{ awx_password }}"
     state: present
   register: inventory
   # delegate_to: localhost
