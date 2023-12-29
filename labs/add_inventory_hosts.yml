@@ -17,7 +17,7 @@
     validate_certs: false
     state: present
   register: inventory
-  # delegate_to: localhost
+  delegate_to: localhost
 
 - name: Ensure group exists in the inventory
   awx.awx.group:
