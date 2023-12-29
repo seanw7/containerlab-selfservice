@@ -25,6 +25,7 @@
     ### Declare unique Subnet Per user to be used later for Docker Container network
     - name: Set CLAB Docker IP Network for Each User
       ansible.builtin.set_fact:
+        group_name: "{{ lab_title }}-{{ lab_username }}"
         ipv4_subnet: 172.100.{{ user_map[lab_username] }}.0/24
       changed_when: false
       when: '"deploy" in actions'
