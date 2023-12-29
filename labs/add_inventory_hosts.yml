@@ -16,10 +16,10 @@
     tower_password: "{{ awx_password }}"
     state: present
   register: inventory
-  delegate_to: localhost
+  # delegate_to: localhost
 
 - name: Ensure group exists in the inventory
-  awx.awx.tower_group:
+  awx.awx.group:
     name: "{{ group_name }}"
     inventory: "{{ inventory.id }}"
     tower_host: "{{ awx_host }}"
@@ -38,7 +38,7 @@
 
 
 - name: Add hosts to the AWX group
-  awx.awx.tower_host:
+  awx.awx.host:
     name: "{{ item.key }}"
     inventory: "{{ inventory.id }}"
     variables:
