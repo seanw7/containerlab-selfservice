@@ -143,6 +143,7 @@
         - name: Add hosts to AWX inventory
           ansible.builtin.include_tasks:
             file: add_inventory_hosts.yml
+          delegate_to: localhost
 
     ### Powerdown and delete all startup configuration of nodes
     - name: Lab Decommissioning
@@ -159,6 +160,7 @@
         - name: Remove hosts from AWX inventory
           ansible.builtin.include_tasks:
             file: remove_inventory_hosts.yml
+          delegate_to: localhost
 
     - name: Print Instructions
       ansible.builtin.debug:
