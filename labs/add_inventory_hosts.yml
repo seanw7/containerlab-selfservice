@@ -8,10 +8,10 @@
 ## awx_password
 
 - name: Ensure inventory exists in AWX
-  awx.awx.tower_inventory:
+  awx.awx.inventory:
     name: "{{ inventory_name }}"
     organization: "{{ organization }}"
-    tower_host: "{{ awx_host }}"
+    # tower_host: "{{ awx_host }}"
     tower_username: "{{ awx_username }}"
     tower_password: "{{ awx_password }}"
     state: present
