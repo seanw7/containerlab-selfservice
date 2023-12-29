@@ -16,6 +16,7 @@
     tower_password: "{{ awx_password }}"
     state: present
   register: inventory
+  delegate_to: localhost
 
 - name: Ensure group exists in the inventory
   awx.awx.tower_group:
@@ -26,11 +27,15 @@
     tower_password: "{{ awx_password }}"
     state: present
   register: group
+  delegate_to: localhost
+
 
 - name: loop over port_mappings
   ansible.builtin.debug:
     var: item
   loop: "{{ port_mappings.port_mappings | dict2items }}"
+  delegate_to: localhost
+
 
 - name: Add hosts to the AWX group
   awx.awx.tower_host:
@@ -44,3 +49,4 @@
     tower_password: "{{ awx_password }}"
     state: present
   loop: "{{ port_mappings.port_mappings | dict2items }}"
+  delegate_to: localhost
