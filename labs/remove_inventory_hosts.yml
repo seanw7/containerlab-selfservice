@@ -1,0 +1,36 @@
+---
+### Required Vars
+## inventory_name
+## organization
+## group_name
+## awx_host
+## awx_username
+## awx_password
+
+
+- name: Remove hosts from the inventory group
+  awx.awx.tower_host:
+    name: "{{ item }}"
+    inventory: "{{ inventory_name }}"
+    tower_host: "{{ awx_host }}"
+    tower_username: "{{ awx_username }}"
+    tower_password: "{{ awx_password }}"
+    state: absent
+  loop: "{{ host_names }}"
+
+- name: Delete group from AWX inventory
+  awx.awx.tower_group:
+    name: "{{ group_name }}"
+    inventory: "{{ inventory_name }}"
+    tower_host: "{{ awx_host }}"
+    tower_username: "{{ awx_username }}"
+    tower_password: "{{ awx_password }}"
+    state: absent
+
+# - name: Delete inventory
+#   awx.awx.tower_inventory:
+#     name: "{{ inventory_name }}"
+#     tower_host: "{{ awx_host }}"
+#     tower_username: "{{ awx_username }}"
+#     tower_password: "{{ awx_password }}"
+#     state: absent

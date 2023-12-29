@@ -7,11 +7,19 @@
     - "{{ lab_title }}/{{ lab_title }}-vars.yml"
     - base_vars.yml
   tasks:
+    - name: Check if both 'deploy' and 'destroy' are in actions
+      ansible.builtin.fail:
+        msg: "Both 'deploy' and 'destroy' are in the actions list. You must choose one or the other. Failing the playbook."
+      when:
+        - "'deploy' in actions"
+        - "'destroy' in actions"
+
     ### Create User and Lab specific directory on remote linux server hosting containerlab
     - name: Create User Specific Lab Directory
       ansible.builtin.file:
         path: "/opt/containerlab/labs/{{ lab_username }}/{{ lab_title }}"
         state: directory
+        # mode: u+rx,g-rx,o-rwx
       when: '"deploy" in actions'
 
     ### Declare unique Subnet Per user to be used later for Docker Container network
@@ -97,16 +105,6 @@
         - lab_exists
       changed_when: true
 
-    ### Powerdown and delete all startup configuration of nodes
-    - name: Destroy Lab
-      ansible.builtin.command:
-        chdir: /opt/containerlab/labs/{{ lab_username }}/{{ lab_title }}
-        cmd: containerlab destroy -c
-      when:
-        - '"destroy" in actions'
-        - lab_exists
-      changed_when: true
-
     ### Run containerlab save on all nodes to save startup configs locally
     - name: Save Lab
       ansible.builtin.command:
@@ -123,7 +121,6 @@
 
     - name: Collect port mappings
       when:
-        - ("deploy" in actions) or ("inspect" in actions)
         - lab_exists
       block:
         - name: Extract port mappings
@@ -136,6 +133,31 @@
           ansible.builtin.debug:
             var: port_mappings
 
+
+    - name: Add ContainerLab Hosts to AWX Inventory
+      when:
+        - ("deploy" in actions) or ("inspect" in actions)
+        - lab_exists
+      block:
+        - name: Add hosts to AWX inventory
+          ansible.builtin.include_tasks:
+            file: add_inventory_hosts.yml
+
+    ### Powerdown and delete all startup configuration of nodes
+    - name: Lab Decommissioning
+      when:
+        - '"destroy" in actions'
+        - lab_exists
+      block:
+        - name: Destroy Lab
+          ansible.builtin.command:
+            chdir: /opt/containerlab/labs/{{ lab_username }}/{{ lab_title }}
+            cmd: containerlab destroy -c
+          changed_when: true
+
+        - name: Remove hosts from AWX inventory
+          ansible.builtin.include_tasks:
+            file: remove_inventory_hosts.yml
 
     - name: Print Instructions
       ansible.builtin.debug:

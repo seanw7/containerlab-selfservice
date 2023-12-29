@@ -1,0 +1,46 @@
+---
+### Required Vars
+## inventory_name
+## organization
+## group_name
+## awx_host
+## awx_username
+## awx_password
+
+- name: Ensure inventory exists in AWX
+  awx.awx.tower_inventory:
+    name: "{{ inventory_name }}"
+    organization: "{{ organization }}"
+    tower_host: "{{ awx_host }}"
+    tower_username: "{{ awx_username }}"
+    tower_password: "{{ awx_password }}"
+    state: present
+  register: inventory
+
+- name: Ensure group exists in the inventory
+  awx.awx.tower_group:
+    name: "{{ group_name }}"
+    inventory: "{{ inventory.id }}"
+    tower_host: "{{ awx_host }}"
+    tower_username: "{{ awx_username }}"
+    tower_password: "{{ awx_password }}"
+    state: present
+  register: group
+
+- name: loop over port_mappings
+  ansible.builtin.debug:
+    var: item
+  loop: "{{ port_mappings.port_mappings | dict2items }}"
+
+- name: Add hosts to the AWX group
+  awx.awx.tower_host:
+    name: "{{ item.key }}"
+    inventory: "{{ inventory.id }}"
+    variables:
+      ansible_host: "{{ shared_ip }}"
+      ansible_port: "{{ item.value }}"
+    tower_host: "{{ awx_host }}"
+    tower_username: "{{ awx_username }}"
+    tower_password: "{{ awx_password }}"
+    state: present
+  loop: "{{ port_mappings.port_mappings | dict2items }}"
