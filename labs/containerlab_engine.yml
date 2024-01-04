@@ -132,16 +132,27 @@
       when:
         - lab_exists
       block:
-        - name: Extract port mappings
+        - name: Extract port 22 mappings
           ansible.builtin.set_fact:
-            port_mappings: "{{ port_mappings | default({}) | combine({item.split()[-1]: (item | regex_search('0.0.0.0:(\\d+)->22/tcp', '\\1') | first)}) }}"
+            port_22_mappings: "{{ port_mappings | default({}) | combine({item.split()[-1]: (item | regex_search('0.0.0.0:(\\d+)->22/tcp', '\\1') | first)}) }}"
           loop: "{{ docker_output.stdout_lines }}"
           when: "'22/tcp' in item"
 
-        - name: Show port mappings
-          ansible.builtin.debug:
-            var: port_mappings
+        - name: Extract port 443 mappings
+          ansible.builtin.set_fact:
+            port_443_mappings: "{{ port_mappings | default({}) | combine({item.split()[-1]: (item | regex_search('0.0.0.0:(\\d+)->443/tcp', '\\1') | first)}) }}"
+          loop: "{{ docker_output.stdout_lines }}"
+          when: "'443/tcp' in item"
 
+        - name: Show port 22 mappings
+          ansible.builtin.debug:
+            var:
+              - port_22_mappings
+              - port_443_mappings
+
+        # - name: Show port 443 mappings
+        #   ansible.builtin.debug:
+        #     var: port_443_mappings
 
     # - name: Add ContainerLab Hosts to AWX Inventory
     #   when:
