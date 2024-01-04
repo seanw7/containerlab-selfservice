@@ -78,9 +78,13 @@
         - ("deploy" in actions) or ("inspect" in actions)
         - ("stdout_lines" in deploy_output) and (deploy_output.stdout_lines | length > 0)
 
-    - name: debug deploy_output
-      debug:
+    - name: Debug deploy_output
+      ansible.builtin.debug:
         var: deploy_output
+
+    - name: Debug docker_output
+      ansible.builtin.debug:
+        var: docker_output
 
     - name: Set lab_exists to true when lab is found
       ansible.builtin.set_fact:
