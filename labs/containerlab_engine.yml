@@ -135,7 +135,7 @@
         - name: Extract port mappings
           ansible.builtin.set_fact:
             port_mappings: "{{ port_mappings | default({}) | combine({item.split()[-1]: (item | regex_search('0.0.0.0:(\\d+)->22/tcp', '\\1') | first)}) }}"
-          loop: "{{ docker_output.stdout_lines }}"
+          loop: "{{ deploy_output.stdout_lines }}"
           when: "'22/tcp' in item"
 
         - name: Show port mappings
