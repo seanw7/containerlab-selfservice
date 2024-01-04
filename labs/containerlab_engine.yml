@@ -146,9 +146,9 @@
 
         - name: Show all exposed Ports for Lab
           ansible.builtin.debug:
-            vars:
-              - port_22_mappings
-              - port_443_mappings
+            msg:
+              - "Port 22: {{ port_22_mappings }}"
+              - "Port 443: {{ port_443_mappings }}"
 
         # - name: Show port 443 mappings
         #   ansible.builtin.debug:
