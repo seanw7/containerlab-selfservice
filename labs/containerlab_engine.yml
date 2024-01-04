@@ -66,7 +66,7 @@
         chdir: /opt/containerlab/labs/{{ lab_username }}/{{ lab_title }}
         cmd: containerlab inspect
       register: deploy_output
-      when: ("deploy" in actions) or ("inspect" in actions)
+      when: ("deploy" in actions) or ("inspect" in actions) or ("destroy" in actions)
       changed_when: false
       failed_when: false
 
