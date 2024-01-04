@@ -147,12 +147,12 @@
         - name: Show all ephemeral Ports mapped to port 22 for Lab
           ansible.builtin.debug:
             msg:
-              - "{{ port_22_mappings | to_nice_json }}"
+              - "{{ port_22_mappings }}"
 
         - name: Show all ephemeral Ports mapped to port 443 for Lab
           ansible.builtin.debug:
             msg:
-              - "{{ port_443_mappings | to_nice_json }}"
+              - "{{ port_443_mappings }}"
 
         # - name: Show port 443 mappings
         #   ansible.builtin.debug:
