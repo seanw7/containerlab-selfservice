@@ -50,7 +50,7 @@
         chdir: /opt/containerlab/labs/{{ lab_username }}/{{ lab_title }}
         cmd: docker container ls -f name={{ lab_username }}
       register: docker_output
-      when: ("deploy" in actions) or ("inspect" in actions)
+      when: ("deploy" in actions) or ("inspect" in actions) or ("destroy" in actions)
       changed_when: false
 
     - name: Print Docker Output
@@ -93,7 +93,7 @@
         - deploy_output is defined
         - "'stdout_lines' in deploy_output"
         - "deploy_output.stdout_lines | length > 0"
-        - ("deploy" in actions) or ("inspect" in actions)
+        - ("deploy" in actions) or ("inspect" in actions) or ("destroy" in actions)
 
     - name: Set lab_exists to false when lab is not found
       ansible.builtin.set_fact:
@@ -102,7 +102,7 @@
         - deploy_output is defined
         - "'stdout_lines' in deploy_output"
         - "deploy_output.stdout_lines | length == 0"
-        - ("deploy" in actions) or ("inspect" in actions)
+        - ("deploy" in actions) or ("inspect" in actions) or ("destroy" in actions)
 
     ### Powerdown lab nodes while maintaining startup configuration
     - name: Shutdown Lab
