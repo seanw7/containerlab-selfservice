@@ -16,12 +16,14 @@ topology:
       kind: "{{ firewall_container_kind }}"
       image: "{{ firewall_container_image }}"
       ports:
-        - "5{{ user_map[lab_username] }}04:22"
+        - "5{{ user_map[lab_username] }}03:22"
+        - "5{{ user_map[lab_username] }}04:443"
     {{ lab_title }}-{{ lab_username }}-firewall02:
       kind: "{{ firewall_container_kind }}"
       image: "{{ firewall_container_image }}"
       ports:
-        - "5{{ user_map[lab_username] }}04:22"
+        - "5{{ user_map[lab_username] }}05:22"
+        - "5{{ user_map[lab_username] }}06:443"
     {{ lab_title }}-{{ lab_username }}-server01:
       kind: "{{ host_container_kind }}"
       image: "{{ host_container_image | default(host_container_kind + ':latest') }}"
@@ -30,7 +32,7 @@ topology:
         PASSWORD_ACCESS: true
         USER_PASSWORD: admin
       ports:
-        - "5{{ user_map[lab_username] }}05:22"
+        - "5{{ user_map[lab_username] }}07:22"
     {{ lab_title }}-{{ lab_username }}-client01:
       kind: "{{ host_container_kind }}"
       image: "{{ host_container_image | default(host_container_kind + ':latest') }}"
@@ -38,7 +40,7 @@ topology:
         PASSWORD_ACCESS: true
         USER_PASSWORD: admin
       ports:
-        - "5{{ user_map[lab_username] }}06:22"
+        - "5{{ user_map[lab_username] }}08:22"
   links:
     {%for link in links %}
     - endpoints: [{{ lab_title }}-{{ lab_username }}-{{link['endpoints'][0]}},{{ lab_title }}-{{ lab_username }}-{{link['endpoints'][1]}}]
