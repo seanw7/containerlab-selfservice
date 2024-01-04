@@ -144,11 +144,12 @@
           loop: "{{ docker_output.stdout_lines }}"
           when: "'443/tcp' in item"
 
-        - name: Show port 22 mappings
+        - name: Show all exposed Ports for Lab
           ansible.builtin.debug:
-            var:
-              - port_22_mappings
-              - port_443_mappings
+            var: item
+          loop:
+            - port_22_mappings
+            - port_443_mappings
 
         # - name: Show port 443 mappings
         #   ansible.builtin.debug:
