@@ -134,20 +134,24 @@
       block:
         - name: Extract port 22 mappings
           ansible.builtin.set_fact:
-            port_22_mappings: "{{ port_22_mappings | default({}) | combine({item.split()[-1]: (item + ':22'  | regex_search('0.0.0.0:(\\d+)->22/tcp', '\\1') | first)}) }}"
+            port_22_mappings: "{{ port_22_mappings | default({}) | combine({item.split()[-1]: (item | regex_search('0.0.0.0:(\\d+)->22/tcp', '\\1') | first)}) }}"
           loop: "{{ docker_output.stdout_lines }}"
           when: "'22/tcp' in item"
 
         - name: Extract port 443 mappings
           ansible.builtin.set_fact:
-            port_443_mappings: "{{ port_443_mappings | default({}) | combine({item.split()[-1]: (item + ':443' | regex_search('0.0.0.0:(\\d+)->443/tcp', '\\1') | first)}) }}"
+            port_443_mappings: "{{ port_443_mappings | default({}) | combine({item.split()[-1]: (item | regex_search('0.0.0.0:(\\d+)->443/tcp', '\\1') | first)}) }}"
           loop: "{{ docker_output.stdout_lines }}"
           when: "'443/tcp' in item"
 
-        - name: Show all exposed Ports for Lab
+        - name: Show all ephemeral Ports mapped to port 22 for Lab
           ansible.builtin.debug:
             msg:
               - "{{ port_22_mappings | to_nice_json }}"
+
+        - name: Show all ephemeral Ports mapped to port 443 for Lab
+          ansible.builtin.debug:
+            msg:
               - "{{ port_443_mappings | to_nice_json }}"
 
         # - name: Show port 443 mappings
