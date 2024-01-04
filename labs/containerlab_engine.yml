@@ -143,14 +143,14 @@
             var: port_mappings
 
 
-    - name: Add ContainerLab Hosts to AWX Inventory
-      when:
-        - ("deploy" in actions) or ("inspect" in actions)
-        - lab_exists
-      block:
-        - name: Add hosts to AWX inventory
-          ansible.builtin.include_tasks:
-            file: add_inventory_hosts.yml
+    # - name: Add ContainerLab Hosts to AWX Inventory
+    #   when:
+    #     - ("deploy" in actions) or ("inspect" in actions)
+    #     - lab_exists
+    #   block:
+    #     - name: Add hosts to AWX inventory
+    #       ansible.builtin.include_tasks:
+    #         file: add_inventory_hosts.yml
 
     ### Powerdown and delete all startup configuration of nodes
     - name: Lab Decommissioning
@@ -164,9 +164,9 @@
             cmd: containerlab destroy -c
           changed_when: true
 
-        - name: Remove hosts from AWX inventory
-          ansible.builtin.include_tasks:
-            file: remove_inventory_hosts.yml
+        # - name: Remove hosts from AWX inventory
+        #   ansible.builtin.include_tasks:
+        #     file: remove_inventory_hosts.yml
 
     - name: Print Instructions
       ansible.builtin.debug:
