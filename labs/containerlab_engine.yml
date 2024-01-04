@@ -146,10 +146,9 @@
 
         - name: Show all exposed Ports for Lab
           ansible.builtin.debug:
-            var: item
-          loop:
-            - port_22_mappings
-            - port_443_mappings
+            vars:
+              - port_22_mappings
+              - port_443_mappings
 
         # - name: Show port 443 mappings
         #   ansible.builtin.debug:
